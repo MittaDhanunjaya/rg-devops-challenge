@@ -163,7 +163,7 @@ scrape_configs:
 Once, all the changes to the docker-compose, Caddyfile, and a new prometheus configuration has done, run the docker compose file by using "docker-compose up -d"
 This command will download the required Docker images and start the containers defined in the docker-compose.yml file in detached mode (-d).
 
-![docker-compose-up](https://github.com/MittaDhanunjaya/kubernetes-with-prometheus/assets/23475308/1216b55d-c3c1-4161-943f-b9e9e4ca80fc)
+![docker-compose-up](screenshots/docker-compose-up.png)
 
 Check your docker ps to check all the containers are up & running. 
 
