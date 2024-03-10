@@ -167,15 +167,15 @@ This command will download the required Docker images and start the containers d
 
 Check your docker ps to check all the containers are up & running. 
 
-![docker_ps](https://github.com/MittaDhanunjaya/kubernetes-with-prometheus/assets/23475308/0c4b699e-bd1b-4293-a0cb-0903942c5861)
+![docker_ps](screenshots/docker_ps.png)
 
 Once the containers are up and running, you can access prometheus via your web browser at http://localhost:9090 and grafana at http://localhost:3000.
 
 You can check the below screenshots for prometheus & grafana webpages:
 
-![prometheus_web_page](https://github.com/MittaDhanunjaya/kubernetes-with-prometheus/assets/23475308/b2dda28a-343b-413d-8d20-474f333e8823)
+![prometheus_web_page](screenshots/prometheus_web_page.png)
 
-![grafana_web_page](https://github.com/MittaDhanunjaya/kubernetes-with-prometheus/assets/23475308/f32b953a-cff0-41b6-a1b4-11afb79a66e7)
+![grafana_web_page](screenshots/grafana_web_page.png)
 
 
 # Step 2:
@@ -185,7 +185,7 @@ After logging in to Grafana, add Prometheus as a data source:
 Click on the gear icon (Connections) on the left sidebar, then select "Data Sources".
 Click on "Add data source", select Prometheus, and configure it with the URL http://prometheus:9090.
 
-![Screenshot 2024-03-10 at 19 54 58](https://github.com/MittaDhanunjaya/kubernetes-with-prometheus/assets/23475308/95f1b163-32ed-4a5e-95a7-e1b82d8897ef)
+![Screenshot 2024-03-10 at 19 54 58](screenshots/Screenshot 2024-03-10 at 19 54 58)
 
 ## Dashboards:
 
