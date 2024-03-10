@@ -1,20 +1,24 @@
-# Recogizer DevOps/Cloud Engineer Technical Challenge
+# Comprehensive Guide: Configuring Prometheus and Grafana for Dockerized Applications
 
 ## Introduction:
-The Documentation guides you to configure Monitoring solution for dockerized applications using Prometheus & Grafana. Also, An overview of the required dashboards to visualise and monitor via Grafana. At last, alerts are created wherever required.
+This guide provides comprehensive instructions for configuring and managing a monitoring solution using Prometheus and Grafana for dockerized applications. It covers setting up Prometheus and Grafana, creating dashboards, configuring alerts, and optional improvements for enhanced functionality.
+
 
 ## Pre-requisites:
-1. Docker & Docker Compose installed on your system. 
-2. Update the necessary packages
-3. Edit the Docker configuration file and replace credsStore to credStore in ~/.docker/config.json (I got an error while using Docker Compose for the first time).
+Before proceeding, ensure you have the following prerequisites installed on your system:
+
+1. Docker
+2. Docker Compose
+3. Necessary updates for Docker configuration
+4. Edit the Docker configuration file and replace credsStore to credStore in ~/.docker/config.json (I got an error while using Docker Compose for the first time).
 
 This documentation will be in two steps:
 1. Setting up monitoring solution by using Prometheus & Grafana for our environment.
 2. Building Dashboards and creating alerts wherever we feel necessary.
 
-# Step 1:
-Before configuring Prometheus & Grafana, we have to make a few adjustments to the Caddyfile configuration.
-Since, Caddy should expose its admin interface on port 2019, we have to explicitly mention the admin:2019 in the configuration file. This endpoint allows to interact with the Caddy server, which can provide us the metrics which we need. 
+# Step 1: Setting Up Prometheus and Grafana:
+## Adjusting Caddyfile Configuration:
+Before configuring Prometheus and Grafana, make adjustments to the Caddyfile configuration to ensure proper metrics exposition:
 
 ```bash
 {
@@ -35,19 +39,19 @@ For ensuring consistency, a docker network ("backend") is applied to all the ser
 ## Configuring Prometheus:
 
 Prometheus is an open-source monitoring and alerting tool that is designed for reliability and scalability. It is primarily used to collect and store time-series data (metrics) from various sources, such as applications, services, and systems.
-1. Install Prometheus on our server. 
-2. Configure Prometheus to scrape metrics from your desired targets
+1. Install Prometheus on the server. 
+2. Configure Prometheus to scrape metrics from desired targets by editing the prometheus.yml file.
 
 ## Configuring Grafana:
 
 Grafana is an open-source visualization and monitoring platform that allows users to create, explore, and share dashboards and visualizations of time-series data. It supports various data sources, including Prometheus, allowing users to visualize metrics collected by Prometheus and other monitoring systems.
-1. Install Grafana on our server.
+1. Install Grafana on the server.
 2. Configure Grafana to connect to Prometheus as a data source.
 
 
 ## Additional tools/configurations:
 
-1. Install Prometheus node-exporter for collecting all the system level metrics (CPU, memory, disk, etc.) from the host machine and makes them available for Prometheus..
+1. Install Prometheus node-exporter for collecting all the system level metrics (CPU, memory, disk, etc.) from the host machine and makes them available for Prometheus.
 2. Install push gateway for collecting short-lived service level batch jobs to an intermediate jobs which prometheus can scrape.
 
 I am using Prometheus & Grafana official docker images from dockerhub in our docker-compose file along with volumes and some necessary environmental variables as you can see below:
@@ -185,18 +189,19 @@ Click on "Add data source", select Prometheus, and configure it with the URL htt
 
 ## Dashboards:
 
-I created multiple dashboards based on the monitoring requirements. They are:
+I created dashboards in Grafana based on monitoring requirements:
+
 
 ### 1. CPU Usage Dashboards
 
-This dashboard provides insights into CPU utilization across servers. It helps in monitoring the overall system load and identifying potential performance bottlenecks.
+Displays CPU utilization across servers to monitor system load and identify performance bottlenecks.
 
 ```bash
 PromQL query: 100 * (1 - avg(rate(node_cpu_seconds_total{mode="idle", instance="node-exporter:9100"}[$__rate_interval])))
 ```
 ### 2. Memory Usage Dashboards
 
-This dashboard shows memory utilization across servers, helping to track memory usage trends and detect memory leaks.
+Shows memory utilization across servers to track memory usage trends and detect memory leaks.
 
 ```bash
 PromQL query: (1 - ((node_memory_MemFree_bytes{instance="node-exporter:9100",job="node-exporter"} + node_memory_Buffers_bytes{instance="node-exporter:9100",job="node-exporter"} + node_memory_Cached_bytes{instance="node-exporter:9100",job="node-exporter"}) / node_memory_MemTotal_bytes{instance="node-exporter:9100", job="node-exporter"})) * 100
@@ -204,7 +209,7 @@ PromQL query: (1 - ((node_memory_MemFree_bytes{instance="node-exporter:9100",job
 
 ### 3. Disk Space Dashboards
 
-Monitors disk space usage across servers to prevent potential outages due to disk space exhaustion.
+Monitors disk space usage to prevent potential outages due to disk space exhaustion.
 
 ```bash
 (node_filesystem_size_bytes{fstype!="tmpfs"} - node_filesystem_free_bytes{fstype!="tmpfs"}) / node_filesystem_size_bytes{fstype!="tmpfs"} * 100
@@ -212,7 +217,7 @@ Monitors disk space usage across servers to prevent potential outages due to dis
 
 ### 4. Network Traffic Dashboards
 
-Displays incoming and outgoing network traffic, aiding in identifying network congestion or abnormal traffic patterns.
+Displays incoming and outgoing network traffic to identify network congestion or abnormal traffic patterns.
 
 ```bash
 sum(irate(node_network_receive_bytes_total{device!="lo"}[5m]) + irate(node_network_transmit_bytes_total{device!="lo"}[5m])) by (device)
@@ -220,7 +225,7 @@ sum(irate(node_network_receive_bytes_total{device!="lo"}[5m]) + irate(node_netwo
 
 ### 5. Caddy Web Service Health Dashboard
 
-Displays whether the Caddy Service is up & running.
+Indicates whether the Caddy Service is up & running.
 
 ```bash
 caddy_reverse_proxy_upstreams_healthy
@@ -228,7 +233,7 @@ caddy_reverse_proxy_upstreams_healthy
 
 ### 6. Http Service Health Dashboard
 
-Displays whether the Http service is up & running.
+Indicates whether the HTTP service is up & running.
 
 ```bash
 sum(rate(promhttp_metric_handler_requests_total{code!="200",instance="caddy:2019"}[10m]))
@@ -236,7 +241,7 @@ sum(rate(promhttp_metric_handler_requests_total{code!="200",instance="caddy:2019
 
 ### 7. Latency Dashboard
 
-Latency refers to the time it takes for a request to be processed from the moment it is sent until a response is received. 
+Monitors latency, ensuring it stays within acceptable limits. 
 
 ```bash
 caddy_http_response_duration_seconds_sum{code="200",instance="caddy:2019"}*1000
@@ -244,7 +249,7 @@ caddy_http_response_duration_seconds_sum{code="200",instance="caddy:2019"}*1000
 
 ### 8. Client & Server Errors Dashboards
 
-Client and server errors dashboards are essential tools for monitoring the health and performance of web services, APIs, or any networked applications. They track and visualize error rates and types occurring during interactions between clients (e.g., web browsers, mobile apps) and servers. These dashboards help teams quickly identify issues, diagnose root causes, and maintain service reliability according to Service Level Agreements (SLAs).
+Client and server errors dashboards are essential tools for monitoring the health and performance of web services, APIs, or any networked applications. They track and visualize error rates and types occurring during interactions between clients (e.g., web browsers, mobile apps) and servers. Monitors client and server errors to maintain service reliability according to SLAs.
 
 ```bash
 sum(caddy_http_request_duration_seconds_count{code=~"4.*"})
@@ -259,12 +264,16 @@ sum(caddy_http_request_duration_seconds_count{code=~"5.*"})
 
 After creating the dashboards, the next important step is to create an alert rules.
 
-Grafana alerts are a powerful feature that allows us to set up notifications based on the data visualized in Grafana dashboards. Alerts help us stay informed about changes or anomalies in our metrics and take timely actions to address them. Here's how Grafana alerts work:
-
 ### Setting Up Grafana Alerts:
-Define Alert Conditions: Specify conditions that trigger an alert. Set thresholds, expressions, or aggregations based on our metrics. 
 
-Configure Notification Channels: Choose how we want to be notified when an alert is triggered. Grafana supports various notification channels, including email, Slack, PagerDuty, and more. I used Gmail as a notification channel and i configured our grafana accordingly. 
+Grafana alerts play a crucial role in proactively monitoring the health and performance of our applications. They allow us to define conditions based on our metrics and receive notifications when those conditions are met. Here's a step-by-step guide on setting up Grafana alerts:
+
+Define Alert Conditions: Specify the conditions that trigger an alert based on our metrics. This can include thresholds, expressions, or aggregations.
+For example, we might want to create an alert for high CPU usage when it exceeds 90% for more than 20 seconds.
+
+Configure Notification Channels: Choose how we want to be notified when an alert is triggered. Grafana supports various notification channels, including email, Slack, PagerDuty, and more.
+In our example, I configured email notifications using Gmail. But for configuring gmail as a notification channel, we have to pass few environmental variables before that:
+
 
 ```bash
 environment:
@@ -277,9 +286,10 @@ environment:
       - GF_SMTP_TLS_ENABLED=true
       - GF_SMTP_SKIP_VERIFY=true  # Note: This is needed if you're using Gmail 
 ```
-In the above script, we have to provide an email address from which we have to send our alerts, password is our gmail app password. we can set a password under this link (https://myaccount.google.com/apppasswords).
+Replace <app-password> with your Gmail app password, which you can generate under this [link](https://myaccount.google.com/apppasswords)
 
 Create Alert Rules: Define alert rules in Grafana's alerting interface. This involves selecting the data source, specifying the metric, setting conditions, and choosing the notification channel(s).
+For each alert, provide a clear description, set the threshold or condition, and specify the duration for which the condition must persist before triggering the alert.
 
 Test Alerts: Before deploying alerts in production, it's essential to test them to ensure they work as expected. I tried manually triggering alerts and using Grafana's built-in testing functionality to verify that notifications are sent correctly.
 
@@ -347,19 +357,16 @@ sum(caddy_http_request_duration_seconds_count{code=~"5.*"}) > 1
 
 ## Optional Improvements:
 
-### 1. Migration to Kubernetes:
+### Migration to Kubernetes:
 
-Deployment Manifests: Convert Docker Compose services into Kubernetes deployment manifests (Deployment or StatefulSet) and service manifests (Service) for container orchestration.
+Convert Docker Compose services into Kubernetes deployment manifests for container orchestration.
 
-Volumes: Use Kubernetes PersistentVolumes (PVs) and PersistentVolumeClaims (PVCs) for managing storage instead of Docker volumes. This provides more flexibility and allows for dynamic provisioning.
+Utilize Kubernetes features like PersistentVolumes, service discovery, and resource management for improved scalability and reliability.
 
-Service Discovery: Utilize Kubernetes' built-in service discovery mechanisms, such as DNS-based service discovery or service discovery via environment variables, instead of relying on container names as in Docker Compose.
+### Secure Credential Management with HashiCorp Vault:
 
-Resource Management: Define resource requests and limits for CPU and memory in your Kubernetes deployment manifests to ensure efficient resource allocation and better performance isolation.
+Integrate HashiCorp Vault for managing sensitive information securely, including passwords, API keys, and TLS certificates.
 
-### 2. Secure Credential Management:
+Leverage Vault's dynamic secrets and access control features for enhanced security and compliance.
 
-Secure Credential Management with HashiCorp Vault:
-Vault Integration: Utilize HashiCorp Vault for managing sensitive information such as passwords, API keys, and TLS certificates. Vault provides centralized, dynamic secrets management with robust encryption and access control features.
-
-Dynamic Secrets: Leverage Vault's capability to generate dynamic secrets on-demand, which have short-lived lifetimes and are automatically revoked after use. This reduces the risk of credentials being compromised and improves overall security posture.
+By following these steps and incorporating optional improvements, you can set up a robust monitoring solution for dockerized applications, ensuring reliability, scalability, and security in your infrastructure.
