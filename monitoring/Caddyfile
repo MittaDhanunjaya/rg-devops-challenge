@@ -1,0 +1,10 @@
+{
+	servers {
+    	metrics
+    }
+    admin :2019
+}
+
+:80 {
+  reverse_proxy http-dummy-service:8080
+}
