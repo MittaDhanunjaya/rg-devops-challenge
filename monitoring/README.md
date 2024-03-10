@@ -274,11 +274,11 @@ Grafana alerts play a crucial role in proactively monitoring the health and perf
 Define Alert Conditions: Specify the conditions that trigger an alert based on our metrics. This can include thresholds, expressions, or aggregations.
 For example, we might want to create an alert for high CPU usage when it exceeds 90% for more than 20 seconds.
 
-To create an alert in Grafana, we have to follow a few steps that are shown in the following pics:
-
-![cpu_alert_01](screenshots/cpu_alert_01.png) ![cpu_alert_02](screenshots/cpu_alert_02.png) ![cpu_alert_03](screenshots/cpu_alert_03.png) ![cpu_alert_04](screenshots/cpu_alert_04.png) ![cpu_alert_05](screenshots/cpu_alert_05.png) ![cpu_alert_06](screenshots/cpu_alert_06.png) ![cpu_alert_07](screenshots/cpu_alert_07.png)
-
 Configure Notification Channels: Choose how we want to be notified when an alert is triggered. Grafana supports various notification channels, including email, Slack, PagerDuty, and more.
+
+![alert_notification_01](screenshots/alert_notification_01.png) ![alert_notification_02](screenshots/alert_notification_02.png) ![alert_notification_03](screenshots/alert_notification_03.png)
+
+
 In our example, I configured email notifications using Gmail. But for configuring gmail as a notification channel, we have to pass few environmental variables before that:
 
 
@@ -297,6 +297,12 @@ Replace <app-password> with your Gmail app password, which you can generate unde
 
 Create Alert Rules: Define alert rules in Grafana's alerting interface. This involves selecting the data source, specifying the metric, setting conditions, and choosing the notification channel(s).
 For each alert, provide a clear description, set the threshold or condition, and specify the duration for which the condition must persist before triggering the alert.
+
+To create an alert in Grafana, we have to follow a few steps that are shown in the following pics:
+
+![cpu_alert_01](screenshots/cpu_alert_01.png) ![cpu_alert_02](screenshots/cpu_alert_02.png) ![cpu_alert_03](screenshots/cpu_alert_03.png) ![cpu_alert_04](screenshots/cpu_alert_04.png) ![cpu_alert_05](screenshots/cpu_alert_05.png) ![cpu_alert_06](screenshots/cpu_alert_06.png) ![cpu_alert_07](screenshots/cpu_alert_07.png)
+
+
 
 Test Alerts: Before deploying alerts in production, it's essential to test them to ensure they work as expected. I tried manually triggering alerts and using Grafana's built-in testing functionality to verify that notifications are sent correctly.
 
