@@ -1,0 +1,517 @@
+apiVersion: 1
+groups:
+    - orgId: 1
+      name: CPU
+      folder: Alert-rules
+      interval: 10s
+      rules:
+        - uid: edf4kcvyt4jcwa
+          title: CPU Usage
+          condition: B
+          data:
+            - refId: A
+              relativeTimeRange:
+                from: 600
+                to: 0
+              datasourceUid: fdf4k0ojnny80c
+              model:
+                editorMode: code
+                expr: 100 * (1 - avg(rate(node_cpu_seconds_total{mode="idle", instance="node-exporter:9100"}[$__rate_interval])))
+                instant: true
+                intervalMs: 1000
+                legendFormat: __auto
+                maxDataPoints: 43200
+                range: false
+                refId: A
+            - refId: B
+              relativeTimeRange:
+                from: 600
+                to: 0
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 0
+                            - 0
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params: []
+                      reducer:
+                        params: []
+                        type: avg
+                      type: query
+                datasource:
+                    name: Expression
+                    type: __expr__
+                    uid: __expr__
+                expression: $A>90
+                intervalMs: 1000
+                maxDataPoints: 43200
+                refId: B
+                type: math
+          noDataState: NoData
+          execErrState: Error
+          for: 20s
+          annotations:
+            summary: CPU usage is too high
+          labels:
+            team: DevOps
+            type: CPU
+          isPaused: false
+    - orgId: 1
+      name: Disk
+      folder: Alert-rules
+      interval: 10s
+      rules:
+        - uid: bdf8h3es2ek8wd
+          title: Low Disk Space Alert
+          condition: B
+          data:
+            - refId: A
+              relativeTimeRange:
+                from: 600
+                to: 0
+              datasourceUid: fdf4k0ojnny80c
+              model:
+                editorMode: code
+                expr: (node_filesystem_size_bytes{fstype!="tmpfs"} - node_filesystem_free_bytes{fstype!="tmpfs"}) / node_filesystem_size_bytes{fstype!="tmpfs"} * 100
+                instant: true
+                intervalMs: 1000
+                legendFormat: __auto
+                maxDataPoints: 43200
+                range: false
+                refId: A
+            - refId: B
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 0
+                            - 0
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params: []
+                      reducer:
+                        params: []
+                        type: avg
+                      type: query
+                datasource:
+                    name: Expression
+                    type: __expr__
+                    uid: __expr__
+                expression: (100 - $A) < 15
+                hide: false
+                intervalMs: 1000
+                maxDataPoints: 43200
+                refId: B
+                type: math
+          noDataState: NoData
+          execErrState: Error
+          for: 20s
+          annotations:
+            summary: Disk space falls below 15%
+          labels:
+            type: disk
+          isPaused: false
+    - orgId: 1
+      name: Memory
+      folder: Alert-rules
+      interval: 10s
+      rules:
+        - uid: bdf8dk75smdxca
+          title: Memory Usage
+          condition: B
+          data:
+            - refId: A
+              relativeTimeRange:
+                from: 600
+                to: 0
+              datasourceUid: fdf4k0ojnny80c
+              model:
+                editorMode: code
+                expr: (1 - ((node_memory_MemFree_bytes{instance="node-exporter:9100", job="“node-exporter”"} + node_memory_Buffers_bytes{instance="node-exporter:9100", job="“node-exporter”"} + node_memory_Cached_bytes{instance="node-exporter:9100", job="“node-exporter”"}) / node_memory_MemTotal_bytes{instance="node-exporter:9100", job="“node-exporter”"})) * 100
+                instant: true
+                intervalMs: 1000
+                legendFormat: __auto
+                maxDataPoints: 43200
+                range: false
+                refId: A
+            - refId: B
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 0
+                            - 0
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params: []
+                      reducer:
+                        params: []
+                        type: avg
+                      type: query
+                datasource:
+                    name: Expression
+                    type: __expr__
+                    uid: __expr__
+                expression: $A>85
+                intervalMs: 1000
+                maxDataPoints: 43200
+                refId: B
+                type: math
+          noDataState: NoData
+          execErrState: Error
+          for: 20s
+          annotations:
+            summary: Memory usage exceeds 85%
+          labels:
+            type: memory
+          isPaused: false
+    - orgId: 1
+      name: Network
+      folder: Alert-rules
+      interval: 10s
+      rules:
+        - uid: edf8kfhkgiyo0e
+          title: Network Traffic Spike Alert
+          condition: B
+          data:
+            - refId: A
+              relativeTimeRange:
+                from: 600
+                to: 0
+              datasourceUid: fdf4k0ojnny80c
+              model:
+                editorMode: code
+                expr: sum(irate(node_network_receive_bytes_total{device!="lo"}[5m]) + irate(node_network_transmit_bytes_total{device!="lo"}[5m])) by (device)
+                instant: true
+                intervalMs: 1000
+                legendFormat: __auto
+                maxDataPoints: 43200
+                range: false
+                refId: A
+            - refId: B
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 0
+                            - 0
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params: []
+                      reducer:
+                        params: []
+                        type: avg
+                      type: query
+                datasource:
+                    name: Expression
+                    type: __expr__
+                    uid: __expr__
+                expression: $A>1000000
+                hide: false
+                intervalMs: 1000
+                maxDataPoints: 43200
+                refId: B
+                type: math
+          noDataState: NoData
+          execErrState: Error
+          for: 20s
+          annotations:
+            summary: network traffic exceeds the predefined threshold (100MB/s).
+          labels:
+            type: network
+          isPaused: false
+    - orgId: 1
+      name: Web-server
+      folder: Alert-rules
+      interval: 10s
+      rules:
+        - uid: bdf5kouxh22v4f
+          title: Web Service
+          condition: A
+          data:
+            - refId: A
+              relativeTimeRange:
+                from: 600
+                to: 0
+              datasourceUid: fdf4k0ojnny80c
+              model:
+                editorMode: code
+                expr: sum(rate(promhttp_metric_handler_requests_total{code!="200",instance="caddy:2019"}[10m]))
+                instant: true
+                intervalMs: 1000
+                legendFormat: __auto
+                maxDataPoints: 43200
+                range: false
+                refId: A
+            - refId: B
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 0
+                            - 0
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params: []
+                      reducer:
+                        params: []
+                        type: avg
+                      type: query
+                datasource:
+                    name: Expression
+                    type: __expr__
+                    uid: __expr__
+                expression: $A>0
+                intervalMs: 1000
+                maxDataPoints: 43200
+                refId: B
+                type: math
+          noDataState: NoData
+          execErrState: Error
+          for: 20s
+          annotations:
+            summary: Dummy Server is down for 20s. Please check once
+          labels:
+            type: Server
+          isPaused: false
+        - uid: adf5pqyna25tse
+          title: Caddy Service
+          condition: B
+          data:
+            - refId: A
+              relativeTimeRange:
+                from: 600
+                to: 0
+              datasourceUid: fdf4k0ojnny80c
+              model:
+                editorMode: code
+                expr: |4-
+                    caddy_reverse_proxy_upstreams_healthy{instance="caddy:2019", job="caddy", upstream="http-dummy-service:8080"}
+                instant: true
+                intervalMs: 1000
+                legendFormat: __auto
+                maxDataPoints: 43200
+                range: false
+                refId: A
+            - refId: B
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 0
+                            - 0
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params: []
+                      reducer:
+                        params: []
+                        type: avg
+                      type: query
+                datasource:
+                    name: Expression
+                    type: __expr__
+                    uid: __expr__
+                expression: $A!=1
+                intervalMs: 1000
+                maxDataPoints: 43200
+                refId: B
+                type: math
+          noDataState: NoData
+          execErrState: Error
+          for: 20s
+          annotations:
+            summary: Caddy Server is down
+          labels:
+            type: Server
+          isPaused: false
+        - uid: bdf6gmc9mhbswd
+          title: 'Average Latency '
+          condition: B
+          data:
+            - refId: A
+              relativeTimeRange:
+                from: 600
+                to: 0
+              datasourceUid: fdf4k0ojnny80c
+              model:
+                editorMode: code
+                expr: caddy_http_response_duration_seconds_sum{code="200",instance="caddy:2019"}*1000
+                instant: true
+                intervalMs: 1000
+                legendFormat: __auto
+                maxDataPoints: 43200
+                range: false
+                refId: A
+            - refId: B
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 0
+                            - 0
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params: []
+                      reducer:
+                        params: []
+                        type: avg
+                      type: query
+                datasource:
+                    name: Expression
+                    type: __expr__
+                    uid: __expr__
+                expression: $A>10
+                hide: false
+                intervalMs: 1000
+                maxDataPoints: 43200
+                refId: B
+                type: math
+          noDataState: NoData
+          execErrState: Error
+          for: 20s
+          annotations:
+            summary: Latency is more than 10 milli seconds
+          labels:
+            type: Server
+          isPaused: false
+    - orgId: 1
+      name: client_error
+      folder: Alert-rules
+      interval: 10s
+      rules:
+        - uid: ddf8qriz1k16ob
+          title: Client errors
+          condition: B
+          data:
+            - refId: A
+              relativeTimeRange:
+                from: 600
+                to: 0
+              datasourceUid: fdf4k0ojnny80c
+              model:
+                editorMode: code
+                expr: sum(caddy_http_request_duration_seconds_count{code=~"4.*"})
+                instant: true
+                intervalMs: 1000
+                legendFormat: __auto
+                maxDataPoints: 43200
+                range: false
+                refId: A
+            - refId: B
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 0
+                            - 0
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params: []
+                      reducer:
+                        params: []
+                        type: avg
+                      type: query
+                datasource:
+                    name: Expression
+                    type: __expr__
+                    uid: __expr__
+                expression: $A>10
+                hide: false
+                intervalMs: 1000
+                maxDataPoints: 43200
+                refId: B
+                type: math
+          noDataState: NoData
+          execErrState: Error
+          for: 20s
+          annotations:
+            summary: Client errors are hitting more than 10 times. It should be cleared as for our SLA
+          labels:
+            type: client
+          isPaused: false
+    - orgId: 1
+      name: server_error
+      folder: Alert-rules
+      interval: 10s
+      rules:
+        - uid: bdf8qdy66cwzkf
+          title: server error
+          condition: B
+          data:
+            - refId: A
+              relativeTimeRange:
+                from: 600
+                to: 0
+              datasourceUid: fdf4k0ojnny80c
+              model:
+                datasource:
+                    type: prometheus
+                    uid: fdf4k0ojnny80c
+                editorMode: code
+                expr: sum(caddy_http_request_duration_seconds_count{code=~"5.*"})
+                instant: true
+                intervalMs: 1000
+                legendFormat: __auto
+                maxDataPoints: 43200
+                range: false
+                refId: A
+            - refId: B
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 0
+                            - 0
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params: []
+                      reducer:
+                        params: []
+                        type: avg
+                      type: query
+                datasource:
+                    name: Expression
+                    type: __expr__
+                    uid: __expr__
+                expression: $A>10
+                intervalMs: 1000
+                maxDataPoints: 43200
+                refId: B
+                type: math
+          noDataState: NoData
+          execErrState: Error
+          for: 20s
+          annotations:
+            summary: The server error is hitting more than 10 times and it should be cleared as for our SLA.
+          labels:
+            type: server
+          isPaused: false
