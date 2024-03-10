@@ -185,7 +185,7 @@ After logging in to Grafana, add Prometheus as a data source:
 Click on the gear icon (Connections) on the left sidebar, then select "Data Sources".
 Click on "Add data source", select Prometheus, and configure it with the URL http://prometheus:9090.
 
-![Screenshot 2024-03-10 at 19 54 58](screenshots/Screenshot 2024-03-10 at 19 54 58)
+![prom_ds_grafana](screenshots/prom_ds_grafana)
 
 ## Dashboards:
 
@@ -256,9 +256,9 @@ sum(caddy_http_request_duration_seconds_count{code=~"4.*"})
 sum(caddy_http_request_duration_seconds_count{code=~"5.*"})
 ```
 
-![Screenshot 2024-03-10 at 14 30 52](https://github.com/MittaDhanunjaya/kubernetes-with-prometheus/assets/23475308/21b0fad9-489d-4c86-9444-0210701b6fe3)
+![dashboard_node](screenshots/dashboard_node)
 
-![Screenshot 2024-03-10 at 14 31 28](https://github.com/MittaDhanunjaya/kubernetes-with-prometheus/assets/23475308/0bde130a-552e-4108-b880-c8540aa3eb56)
+![dashboard_caddy](screenshots/dashboard_caddy)
 
 ## Alerts
 
@@ -295,15 +295,15 @@ Test Alerts: Before deploying alerts in production, it's essential to test them 
 
 ### Test Alert:
 
-![Screenshot 2024-03-10 at 20 27 06](https://github.com/MittaDhanunjaya/kubernetes-with-prometheus/assets/23475308/aee76baa-25d1-4bcf-82db-bf59395923b4)
+![test_alert](screenshots/test_alert)
 
 ### Firing Alert:
 
-![Screenshot 2024-03-10 at 20 28 51](https://github.com/MittaDhanunjaya/kubernetes-with-prometheus/assets/23475308/901c24b6-5f31-4783-9441-bcdc53501609)
+![fired_alert](screenshots/fired_alert)
 
 ### Resolved Alert:
 
-![Screenshot 2024-03-10 at 20 29 16](https://github.com/MittaDhanunjaya/kubernetes-with-prometheus/assets/23475308/d7db1de9-e42c-41d3-8cbd-9d41bc238872)
+![resolved_alert](screenshots/resolved_alert)
 
 Overall, I have created alert rules for all the dashboards created in Grafana. I have included the script for creating an alert rule is included in the monitoring/Grafana/Alert-Rules folder
 
