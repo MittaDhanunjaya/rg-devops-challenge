@@ -256,9 +256,9 @@ sum(caddy_http_request_duration_seconds_count{code=~"4.*"})
 sum(caddy_http_request_duration_seconds_count{code=~"5.*"})
 ```
 
-![dashboard_node](screenshots/dashboard_node)
+![dashboard_node](screenshots/dashboard_node.png)
 
-![dashboard_caddy](screenshots/dashboard_caddy)
+![dashboard_caddy](screenshots/dashboard_caddy.png)
 
 ## Alerts
 
