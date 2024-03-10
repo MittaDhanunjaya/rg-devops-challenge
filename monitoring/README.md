@@ -10,7 +10,7 @@ Before proceeding, ensure you have the following prerequisites installed on your
 1. Docker
 2. Docker Compose
 3. Necessary updates for Docker configuration
-4. Edit the Docker configuration file and replace credsStore to credStore in ~/.docker/config.json (I got an error while using Docker Compose for the first time).
+4. Edit the Docker configuration file and replace credsStore to credStore in ~/.docker/config.json (I got an error while using Docker Compose for the first time. BTW, I am using Docker version 25.0.3).
 
 This documentation will be in two steps:
 1. Setting up monitoring solution by using Prometheus & Grafana for our environment.
@@ -186,6 +186,9 @@ Click on the gear icon (Connections) on the left sidebar, then select "Data Sour
 Click on "Add data source", select Prometheus, and configure it with the URL http://prometheus:9090.
 
 ![prom_ds_grafana](screenshots/prom_ds_grafana)
+![prom_ds_grafana_01](screenshots/prom_ds_grafana_01.png)
+![prom_ds_grafana_02](screenshots/prom_ds_grafana_02.png)
+![prom_ds_grafana_03](screenshots/prom_ds_grafana_03.png)
 
 ## Dashboards:
 
@@ -271,6 +274,10 @@ Grafana alerts play a crucial role in proactively monitoring the health and perf
 Define Alert Conditions: Specify the conditions that trigger an alert based on our metrics. This can include thresholds, expressions, or aggregations.
 For example, we might want to create an alert for high CPU usage when it exceeds 90% for more than 20 seconds.
 
+To create an alert in Grafana, we have to follow a few steps that are shown in the following pics:
+
+![cpu_alert_01](screenshots/cpu_alert_01.png) ![cpu_alert_02](screenshots/cpu_alert_02.png) ![cpu_alert_03](screenshots/cpu_alert_03.png) ![cpu_alert_04](screenshots/cpu_alert_04.png) ![cpu_alert_05](screenshots/cpu_alert_05.png) ![cpu_alert_06](screenshots/cpu_alert_06.png) ![cpu_alert_07](screenshots/cpu_alert_07.png)
+
 Configure Notification Channels: Choose how we want to be notified when an alert is triggered. Grafana supports various notification channels, including email, Slack, PagerDuty, and more.
 In our example, I configured email notifications using Gmail. But for configuring gmail as a notification channel, we have to pass few environmental variables before that:
 
@@ -331,7 +338,7 @@ Network Traffic Spike Alert:
 
 Description: Alerts when network traffic exceeds the predefined threshold.
 Threshold: network_traffic > 100MB
-Condition: sum(irate(node_network_receive_bytes_total{device!="lo"}[5m]) + irate(node_network_transmit_bytes_total{device!="lo"}[5m])) by (device) > 100000000
+Condition: sum(irate(node_network_receive_bytes_total{device!="lo"}[5m]) + irate(node_network_transmit_bytes_total{device!="lo"}[5m])) by (device) > 1000000
 
 Caddy Web Service Health Alert:
 
